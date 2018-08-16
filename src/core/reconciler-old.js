@@ -101,10 +101,12 @@ function instantiate(element) {
     const instance = {};
     const publicInstance = createPublicInstance(element, instance);
     const childElement = publicInstance.render();
+    if (element.type.name == 'StoryList') console.log(childElement);
+
     // what's wrapped inside render returned as single child instance of the component
     const childInstance = instantiate(childElement);
     const dom = childInstance.dom;
-    if (element.type.name == 'StoryLike') console.log(childInstance);
+    // if (element.type.name == 'StoryLike') console.log(childInstance);
 
     // element = {type: Component, props:{}}
     // dom is html trunk returned by Component

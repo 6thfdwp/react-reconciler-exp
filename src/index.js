@@ -37,7 +37,8 @@ const styles = {
     padding: 0,
   },
   button: {
-    width: '80px',
+    width: '60px',
+    'margin-right': '20px',
   },
 };
 
@@ -56,6 +57,7 @@ class StoryList extends Component {
     const story = { name: 'Random story', url: '/', likes: randomLikes() };
     let s = [...this.state.stories, story];
     this.setState({ stories: s });
+    render(<App title="Full tree update with new node" />, rootContainer);
   }
 
   render() {
@@ -80,6 +82,7 @@ class StoryLike extends Component {
 
   like() {
     this.setState({ likes: this.state.likes + 1 });
+    render(<App title="Full tree update" />, rootContainer);
   }
 
   render() {
@@ -98,7 +101,6 @@ class StoryLike extends Component {
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = { stories };
   }
 
   render() {
@@ -110,4 +112,5 @@ class App extends Component {
     );
   }
 }
-render(<App title="Render based on local state" />, rootContainer);
+
+render(<App title="Full tree mount" />, rootContainer);
