@@ -1,5 +1,3 @@
-// import reconcile from './reconciler';
-
 export default class Component {
   constructor(props) {
     this.props = props;
@@ -8,15 +6,13 @@ export default class Component {
 
   setState(partialState) {
     this.state = Object.assign({}, this.state, partialState);
-    // const internal = this.__internalInstance;
-    // const parentDom = internal.dom.parentNode;
-    // console.log(parentDom);
-    // console.log(internal);
     // reconcile(parentDom, internal, internal.element);
+    this._internalInstance.receive(this._internalInstance.currentElement);
   }
 
-  // internal is from instantiate with {dom, element, childInstance, componentItself}
-  setInternalInstance(internal) {}
+  setInternalInstance(internal) {
+    this._internalInstance = internal;
+  }
 }
 
 Component.isClassComponent = true;

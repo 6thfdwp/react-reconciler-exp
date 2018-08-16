@@ -20,6 +20,7 @@ class DOMComponent {
   constructor(element) {
     this.currentElement = element;
     // the wrapper instance of each child element
+    // could be DOMComponent or CompositeComponent
     this.renderedChildren = [];
     // dom node in a particular level
     this.node = null;
@@ -32,7 +33,6 @@ class DOMComponent {
   mount() {
     const { type, props } = this.currentElement;
     let children = props.children || [];
-    // children.filter(Boolean)
 
     // transform raw element to platform specific node with
     // props set as attributes and event handler attached
@@ -59,6 +59,8 @@ class DOMComponent {
 
     let nextChildren = nextProps.children,
       nextRenderedChildren = [];
+    // In real, here is way more complicated to handle children more efficiently, reorder, insert
+    // now we have brutle force algorithm to only compare child in the same position
     for (let i = 0, len = nextChildren.length; i < len; i++) {
       if (!prevRenderedChildren[i]) {
         // mount nextChildren[i], it's new node
@@ -112,6 +114,8 @@ class CompositeComponent {
     if (type.isClassComponent) {
       publicInstance = new type(props);
       renderedElement = publicInstance.render();
+      // simply for setState
+      publicInstance.setInternalInstance(this);
     } else {
       renderedElement = type(props);
       publicInstance = null;
@@ -125,15 +129,7 @@ class CompositeComponent {
     const { type, props } = this.currentElement;
     // Object.keys(props).filter(k != 'children')
     let publicInstance, renderedElement;
-    if (type.isClassComponent) {
-      publicInstance = new type(props);
-      // console.log(component);
-      renderedElement = publicInstance.render();
-    } else {
-      renderedElement = type(props);
-      publicInstance = null;
-    }
-    this.publicInstance = publicInstance;
+    renderedElement = this._createPublicIntanceAndRender(this.currentElement);
     this.renderedComponent = instantiateComponent(renderedElement);
 
     return this.renderedComponent.mount();

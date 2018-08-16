@@ -47,17 +47,12 @@ class StoryList extends Component {
     super(props);
     this.state = { stories };
   }
-  //
-  // like(story) {
-  //   const s = {likes: story.likes+1, ...story}
-  //   story.likes += 1;
-  // }
 
   handleAdd() {
     const story = { name: 'Random story', url: '/', likes: randomLikes() };
     let s = [...this.state.stories, story];
     this.setState({ stories: s });
-    render(<App title="Full tree update with new node" />, rootContainer);
+    // render(<App title="Full tree update with new node" />, rootContainer);
   }
 
   render() {
@@ -82,7 +77,7 @@ class StoryLike extends Component {
 
   like() {
     this.setState({ likes: this.state.likes + 1 });
-    render(<App title="Full tree update" />, rootContainer);
+    // render(<App title="Full tree update" />, rootContainer);
   }
 
   render() {
@@ -98,19 +93,27 @@ class StoryLike extends Component {
   }
 }
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    return (
-      <div>
-        <h1>{this.props.title}</h1>
-        <StoryList />
-      </div>
-    );
-  }
+function App({ title }) {
+  return (
+    <div>
+      <h1>{title}</h1>
+      <StoryList />
+    </div>
+  );
 }
+// class App extends Component {
+//   constructor(props) {
+//     super(props);
+//   }
+//
+//   render() {
+//     return (
+//       <div>
+//         <h1>{this.props.title}</h1>
+//         <StoryList />
+//       </div>
+//     );
+//   }
+// }
 
 render(<App title="Full tree mount" />, rootContainer);
