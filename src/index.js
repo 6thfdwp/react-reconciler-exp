@@ -72,12 +72,11 @@ class StoryList extends Component {
 class StoryLike extends Component {
   constructor(props) {
     super(props);
-    this.state = { likes: randomLikes() };
+    this.state = { likes: props.story.likes };
   }
 
   like() {
     this.setState({ likes: this.state.likes + 1 });
-    // render(<App title="Full tree update" />, rootContainer);
   }
 
   render() {
@@ -85,7 +84,8 @@ class StoryLike extends Component {
     return (
       <li>
         <button style={styles.button} onClick={e => this.like()}>
-          {this.state.likes} <b> ❤️</b>
+          {this.state.likes}
+          ❤️
         </button>
         <a href={story.url}>{story.name}</a>
       </li>
@@ -93,27 +93,27 @@ class StoryLike extends Component {
   }
 }
 
-function App({ title }) {
-  return (
-    <div>
-      <h1>{title}</h1>
-      <StoryList />
-    </div>
-  );
+class App extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <div>
+        <h1>{this.props.title}</h1>
+        <StoryList />
+      </div>
+    );
+  }
+  // render() {
+  //   return (
+  //     <div>
+  //       <h1>{this.props.title}</h1>
+  //       <StoryLike story={stories[0]} />
+  //     </div>
+  //   );
+  // }
 }
-// class App extends Component {
-//   constructor(props) {
-//     super(props);
-//   }
-//
-//   render() {
-//     return (
-//       <div>
-//         <h1>{this.props.title}</h1>
-//         <StoryList />
-//       </div>
-//     );
-//   }
-// }
 
 render(<App title="Full tree mount" />, rootContainer);

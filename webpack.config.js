@@ -13,7 +13,10 @@ module.exports = {
     port: process.env.PORT || 9999,
   },
   entry: {
-    didactapp: ['webpack-dev-server/client?http://localhost:9999', './src/index.js'],
+    didactapp: [
+      'webpack-dev-server/client?http://localhost:9999',
+      './src/index.js',
+    ],
   },
   output: {
     path: path.resolve(__dirname, 'build'),

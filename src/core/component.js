@@ -1,3 +1,5 @@
+import { scheduleUpdate } from '../fiber-reconciler/render';
+
 export default class Component {
   constructor(props) {
     this.props = props;
@@ -5,9 +7,10 @@ export default class Component {
   }
 
   setState(partialState) {
-    this.state = Object.assign({}, this.state, partialState);
-    // reconcile(parentDom, internal, internal.element);
-    this._internalInstance.receive(this._internalInstance.currentElement);
+    // this.state = Object.assign({}, this.state, partialState);
+    // this._internalInstance.receive(this._internalInstance.currentElement);
+
+    scheduleUpdate(this, partialState);
   }
 
   setInternalInstance(internal) {
@@ -16,3 +19,8 @@ export default class Component {
 }
 
 Component.isClassComponent = true;
+export function createInstance(fiber) {
+  const instance = new fiber.type(fiber.props);
+  instance.__fiber = fiber;
+  return instance;
+}
