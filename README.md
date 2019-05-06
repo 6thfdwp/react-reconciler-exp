@@ -1,5 +1,4 @@
-# didact-dev
+Focus on learning how reconciler works, compare two main reconciling algorithms: stack reconciler and fiber reconciler.
 
-Incremental learning react by building it from inspiring repo:
-https://github.com/pomber/didact and Facebook implementation notes for
+inspired by https://github.com/pomber/didact and Facebook implementation notes for
 [stack reconciler](https://reactjs.org/docs/implementation-notes.html)
