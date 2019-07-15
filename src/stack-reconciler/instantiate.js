@@ -92,10 +92,21 @@ class DOMComponent {
   }
 }
 
+/**
+ *  Wrapper to mount custom component (defined by function or class)
+ *  this is where we execute actual 'render' from those components (App, StoryList, StoryLike etc.)
+ *  get the corresponding element object returned from 'createElement', continue mounting
+ *
+ **/
 class CompositeComponent {
+  /**
+   *
+   *  @param {object} element: {type, props}  
+   *  @param {?array-like} args: children of current element
+   **/  
   constructor(element) {
     this.currentElement = element;
-    // the wrapper instance of what render return from this type of composite component
+    // reference to another CompositeComponent instance or DOMComponent instance
     this.renderedComponent = null;
     this.publicInstance = null;
   }
