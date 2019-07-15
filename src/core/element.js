@@ -1,7 +1,14 @@
 export const TEXT_ELEMENT = 'TEXT ELEMENT';
 
 /**
- * type: element type
+ *  This will be used by babel loader to transpile JSX into nested function calls 
+ *  eventually forms the element object tree
+ *
+ *  @param {string|function} type: 
+ *        either dom el 'div', 'span' etc. or custom component
+ *  @param {object} config: properties speficied in JSX
+ *        like style, onClick..
+ *  @param {?array-like} args: children of current element
  **/
 export default function createElement(type, config, ...args) {
   const props = Object.assign({}, config);
