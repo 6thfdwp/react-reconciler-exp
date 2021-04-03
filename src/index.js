@@ -1,119 +1,110 @@
 /** @jsx createElement */
-import { createElement, Component, render } from './core/didact';
+import { createElement, render } from './core/didact';
 
-const randomLikes = () => Math.ceil(Math.random() * 100);
-const rootContainer = document.body;
-const stories = [
-  {
-    name: 'Didact introduction',
-    url: 'http://bit.ly/2pX7HNn',
-    likes: randomLikes(),
-  },
-  {
-    name: 'Rendering DOM elements ',
-    url: 'http://bit.ly/2qCOejH',
-    likes: randomLikes(),
-  },
-  {
-    name: 'Element creation and JSX',
-    url: 'http://bit.ly/2qGbw8S',
-    likes: randomLikes(),
-  },
-  {
-    name: 'Instances and reconciliation',
-    url: 'http://bit.ly/2q4A746',
-    likes: randomLikes(),
-  },
-  {
-    name: 'Components and state',
-    url: 'http://bit.ly/2rE16nh',
-    likes: randomLikes(),
-  },
-];
+import render from './stack-reconciler/render'
+import {render as fiberRender} from './fiber-reconciler/render'
+import App from './app';
 
-const styles = {
-  ul: {
-    'list-style-type': 'none',
-    padding: 0,
-  },
-  button: {
-    width: '60px',
-    'margin-right': '20px',
-  },
-};
 
-class StoryList extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { stories };
+  const onChangeReconciler = (e) => {
+    const {id, checked} = e.target;
+    const tab1Container = document.getElementById('tab1-container');
+    const tab2Container = document.getElementById('tab2-container');
+    if (id === 'tab1' && checked) {
+      tab1Container.removeChild(tab1Container.firstElementChild);
+      const h1 = document.createElement('h1');
+      h1.textContent = 'This is rendered by previous Reconciling'
+      tab1Container.appendChild(h1);
+      // render(<App title="Stack Reconciler" />, tab1Container);
+    }
+    if (id === 'tab2' && checked) {
+      tab2Container.removeChild(tab2Container.firstElementChild)
+      fiberRender(<App title="Fiber Reconciler" />, tab2Container);
+      // const h1 = document.createElement('h1');
+      // h1.textContent = 'This is rendered by new Reconciling based on Fiber'; 
+      // tab2Container.appendChild(h1)
+    }
   }
 
-  handleAdd() {
-    const story = { name: 'Random story', url: '/', likes: randomLikes() };
-    let s = [...this.state.stories, story];
-    this.setState({ stories: s });
-    // render(<App title="Full tree update with new node" />, rootContainer);
-  }
+document.querySelectorAll("input[name='tab-input']").forEach((input) => {
+  input.addEventListener('change', onChangeReconciler);
+});
 
-  render() {
-    return (
-      <div id="list">
-        <ul style={styles.ul}>
-          {this.state.stories.map((s, i) => {
-            return <StoryLike story={s} />;
-          })}
-        </ul>
-        <button onClick={e => this.handleAdd()}>Add</button>
-      </div>
-    );
-  }
-}
 
-class StoryLike extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { likes: props.story.likes };
-  }
+// const styles = {
+//   ul: {
+//     'list-style-type': 'none',
+//     padding: 0,
+//   },
+//   button: {
+//     width: '60px',
+//     'margin-right': '20px',
+//   },
+// };
 
-  like() {
-    this.setState({ likes: this.state.likes + 1 });
-  }
+// class StoryList extends Component {
+//   constructor(props) {
+//     super(props);
+//     this.state = { stories };
+//   }
 
-  render() {
-    const { story } = this.props;
-    return (
-      <li>
-        <button style={styles.button} onClick={e => this.like()}>
-          {this.state.likes}
-          ❤️
-        </button>
-        <a href={story.url}>{story.name}</a>
-      </li>
-    );
-  }
-}
+//   handleAdd() {
+//     const story = { name: 'Random story', url: '/', likes: randomLikes() };
+//     let s = [...this.state.stories, story];
+//     this.setState({ stories: s });
+//   }
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-  }
+//   render() {
+//     return (
+//       <div id="list">
+//         <ul style={styles.ul}>
+//           {this.state.stories.map((s, i) => {
+//             return <StoryLike story={s} />;
+//           })}
+//         </ul>
+//         <button onClick={e => this.handleAdd()}>Add</button>
+//       </div>
+//     );
+//   }
+// }
 
-  render() {
-    return (
-      <div>
-        <h1>{this.props.title}</h1>
-        <StoryList />
-      </div>
-    );
-  }
-  // render() {
-  //   return (
-  //     <div>
-  //       <h1>{this.props.title}</h1>
-  //       <StoryLike story={stories[0]} />
-  //     </div>
-  //   );
-  // }
-}
+// class StoryLike extends Component {
+//   constructor(props) {
+//     super(props);
+//     this.state = { likes: props.story.likes };
+//   }
 
-render(<App title="Full tree mount" />, rootContainer);
+//   like() {
+//     this.setState({ likes: this.state.likes + 1 });
+//   }
+
+//   render() {
+//     const { story } = this.props;
+//     return (
+//       <li>
+//         <button style={styles.button} onClick={e => this.like()}>
+//           {this.state.likes}
+//           ❤️
+//         </button>
+//         <a href={story.url}>{story.name}</a>
+//       </li>
+//     );
+//   }
+// }
+
+// class App extends Component {
+//   constructor(props) {
+//     super(props);
+//   }
+
+//   render() {
+//     return (
+//       <div>
+//         <h1>{this.props.title}</h1>
+//         <StoryList />
+//       </div>
+//     );
+//   }
+// }
+
+// render(<App title="Full tree mount" />, rootContainer);

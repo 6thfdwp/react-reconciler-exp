@@ -2,11 +2,82 @@
 <html lang="en" data-framework="didact">
 	<head>
 		<meta charset="utf-8">
-		<title>Didact • Playground</title>
+		<title>React Reconciler Exp</title>
 		<!-- <link rel="stylesheet" href="todomvc.css"> -->
+		<style>
+			.didact-tabs {
+				display: flex;
+				flex-wrap: wrap;
+			}
+			label {
+				background-color: #eee;
+				border: 1px solid #ddd;
+				cursor: pointer;
+				padding: .5em 1em;
+				order: 1;
+			}
+			input[type=radio], .didact-tabs_container {
+				display: none;
+				opacity: 1;
+				transition: opacity 0.5s ease-out;
+			}
+			.didact-tabs_container {
+				width: 100%;
+				padding: 1em;
+				order: 2;
+			}
+			
+			input[type=radio]:checked + label {
+				background-color: #fff;
+				border-bottom: 2px solid black;
+			}
+
+			input[type=radio]:checked + label + .didact-tabs_container {
+				display: block;
+				opacity: 1;
+				transition: opacity 0.5s ease-in;
+			}
+		</style>
 	</head>
 	<body>
+		<div class='didact-tabs'>
+			<input id="tab1" type="radio" name="tab-input" />
+			<label for="tab1">Stack Reconciler</label>
+			<div id="tab1-container" class="didact-tabs_container">
+				<!-- <h1>Recursion...</h1> -->
+			</div>
+
+			<input id='tab2' type="radio" name="tab-input" />
+			<label for="tab2">Fiber Reconciler</label>
+			<div id="tab2-container" class="didact-tabs_container">
+				<!-- <h1>Schedule and Split</h1> -->
+			</div>
+		</div>
+
 		<div id='root'></div>
-		<script src="didactapp.js"></script>
+		<!-- <script>
+			const onChangeReconciler = (e) => {
+				const {id, checked} = e.target;
+				const tab1Container = document.getElementById('tab1-container');
+				const tab2Container = document.getElementById('tab2-container');
+				if (id === 'tab1' && checked) {
+					tab1Container.removeChild(tab1Container.firstElementChild);
+					const h1 = document.createElement('h1');
+					h1.textContent = 'This is rendered by previous Reconciling'
+					tab1Container.appendChild(h1);
+					// render(<App title="Stack Reconciler" />, tab1Container);
+				}
+				if (id === 'tab2' && checked) {
+					tab2Container.removeChild(tab2Container.firstElementChild)
+					const h1 = document.createElement('h1');
+					h1.textContent = 'This is rendered by new Reconciling based on Fiber'; 
+					tab2Container.appendChild(h1)
+				}
+			}
+			document.querySelectorAll("input[name='tab-input']").forEach((input) => {
+			input.addEventListener('change', onChangeReconciler);
+			});
+		</script> -->
+		<script src="main.js"></script>
 	</body>
 </html>

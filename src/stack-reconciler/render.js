@@ -1,5 +1,6 @@
 import instantiateComponent from './instantiate';
 
+// simulate ReactDOM.render
 export default function render(element, container) {
   if (container.children.length > 1) {
     const prevRootNode = container.children[1];
