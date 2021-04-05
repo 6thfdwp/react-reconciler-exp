@@ -34,6 +34,24 @@ const UPDATE = 3;
  * Think of it as building linked list incrementally only need to keep a pointer
  * to know where to resume upon browser next idle
  *
+ * Fiber (the unit of work) data structure:
+ * {
+ *    tag: 'root' | 'host' | 'class'
+ *    type: string (h1, ul) | function (App, StoryList), same as element.type
+ *    props: Object {...others, children: []}, same as element.props
+ *
+ *    // the linkage that allows the reconciliation to be paused and restarted
+ *    // for next loop when browser main thread is idle
+ *    child: the first child Fiber | null
+ *    sibling: its sibling fiber | null
+ *    parent: its parent fiber | null
+ *    // for commit phase
+ *    effectTag: 1(Placement) | 2(Deletion) | 3(Update)
+ *    effects: Array, flattened list of fibers to be rendered to DOM
+ *    stateNode: DOM node | instance of component
+ *
+ *    alternate: corresponding fiber which has been committed last time
+ * }
  */
 export default class Scheduler {
   constructor(Reconciler) {
@@ -54,7 +72,7 @@ export default class Scheduler {
     return node;
   }
 
-  resetNextUnitOfWork() {
+  resetStartFiber() {
     const update = this._updateQueue.shift();
     if (!update) {
       return null;
@@ -98,8 +116,8 @@ export default class Scheduler {
     // if still in the current reconciliation
     if (this._nextWork) return this._nextWork;
 
-    // extract next update to work, could come from component setState
-    this._nextWork = this.resetNextUnitOfWork();
+    // extract next update to work, e.g when component setState
+    this._nextWork = this.resetStartFiber();
     return this._nextWork;
   }
 
@@ -122,11 +140,16 @@ export default class Scheduler {
   }
 
   _log(fiber) {
+    const { id } = fiber.props;
     if (!fiber.type) return 'root';
-    if (typeof fiber.type == 'string') return fiber.type;
+    if (typeof fiber.type == 'string') return `${fiber.type}#${id || ''}`;
 
-    return fiber.type.name;
+    return `${fiber.type.name}`;
   }
+  /**
+   *
+   * @param {Object} wipFiber
+   */
   performUnitOfWork(wipFiber) {
     // Reconciler is the one that does real work
     this._reconciler.receive(wipFiber);
@@ -163,7 +186,6 @@ export default class Scheduler {
    * ]
    */
   completeWork(fiber) {
-    console.log(`complete work for ${this._log(fiber)}`, fiber);
     if (fiber.tag == CLASS_COMPONENT) {
       fiber.stateNode.__fiber = fiber;
     }
@@ -182,9 +204,11 @@ export default class Scheduler {
       // ready to kick off commit phase
       this._pendingCommit = fiber;
     }
+    console.log(`complete work for ${this._log(fiber)}`, fiber);
   }
 
   commitWork(fiber) {
+    //TODO should we add fiber.tag === CLASS
     if (fiber.tag == HOST_ROOT || !fiber.parent) {
       return;
     }
@@ -198,21 +222,17 @@ export default class Scheduler {
     if (!parentFiber) return;
 
     let domParent = parentFiber.stateNode;
-    // let domParentFiber = fiber.parent;
-    // while (domParentFiber.tag == CLASS_COMPONENT) {
-    //   domParentFiber = domParentFiber.parent;
-    // }
-    // const domParent = domParentFiber.stateNode;
 
     if (fiber.effectTag == PLACEMENT && fiber.tag == HOST_COMPONENT) {
       domParent.appendChild(fiber.stateNode);
-    } else if (fiber.effectTag == UPDATE) {
+    } else if (fiber.effectTag == UPDATE && fiber.tag === HOST_COMPONENT) {
       updateDomProperties(fiber.stateNode, fiber.alternate.props, fiber.props);
     } else if (fiber.effectTag == DELETION) {
       this.commitDeletion(fiber, domParent);
     }
   }
 
+  //TODO review it!
   commitDeletion(fiber, domParent) {
     let node = fiber;
     while (true) {
@@ -233,10 +253,11 @@ export default class Scheduler {
 
   commitAll() {
     let fiber = this._pendingCommit;
-    fiber.effects.forEach(f => {
+    fiber.effects.forEach((f) => {
       this.commitWork(f);
     });
-    if (fiber.tag === HOST_ROOT) fiber.stateNode._rootContainerFiber = fiber;
+    //TODO can we not use this one
+    // if (fiber.tag === HOST_ROOT) fiber.stateNode._rootContainerFiber = fiber;
     this._nextWork = null;
     this._pendingCommit = null;
   }

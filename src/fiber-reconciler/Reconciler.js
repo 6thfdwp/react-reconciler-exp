@@ -24,6 +24,12 @@ let fiber = {
 */
 
 export default class Reconciler {
+  /**
+   *
+   * @param {Object} wipFiber
+   *  this is actually nextUnitOfWork from Scheduler workloop when browser main thread idle
+   *  continue reconciling the tree
+   */
   receive(wipFiber) {
     if (wipFiber.tag === CLASS_COMPONENT) {
       let instance = wipFiber.stateNode;
@@ -37,7 +43,7 @@ export default class Reconciler {
         return;
       }
       instance.props = wipFiber.props;
-      instance.state = Object.assign({}, instance.state, wipFiber.partialState);
+      // instance.state = Object.assign({}, instance.state, wipFiber.partialState);
       // console.log(instance.state);
       wipFiber.partialState = null;
 
@@ -55,7 +61,7 @@ export default class Reconciler {
 
   /**
    * Tranform children elements to new fiber and establish the linkage
-   * wipFiber (nextUnitOfWork from Scheduler) is made parent
+   * @wipFiber nextUnitOfWork from Scheduler workloop
    */
   reconcileChildren(wipFiber, childEls) {
     const elements = childEls

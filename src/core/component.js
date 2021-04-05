@@ -7,7 +7,7 @@ export default class Component {
   }
 
   setState(partialState) {
-    // this.state = Object.assign({}, this.state, partialState);
+    this.state = Object.assign({}, this.state, partialState);
     // this._internalInstance.receive(this._internalInstance.currentElement);
 
     scheduleUpdate(this, partialState);

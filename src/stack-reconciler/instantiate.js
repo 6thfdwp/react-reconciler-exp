@@ -1,4 +1,4 @@
-import { createDomElement, updateDomProperties } from '../dom-utils';
+import { createDomElement, updateDomProperties } from '../core/dom-utils';
 
 // factory to choose which interal used to mount actual node
 export default function instantiateComponent(element) {
@@ -38,7 +38,7 @@ class DOMComponent {
     // props set as attributes and event handler attached
     const node = createDomElement(this.currentElement);
     this.node = node;
-    children.forEach(childEle => {
+    children.forEach((childEle) => {
       // child could be either host dom or composite
       // instantiate factory will figure out which internal used
       let childInstance = instantiateComponent(childEle);
@@ -53,7 +53,10 @@ class DOMComponent {
 
   receive(nextElement) {
     let { type, props: nextProps } = nextElement;
-    let { currentElement: prevElement, renderedChildren: prevRenderedChildren } = this;
+    let {
+      currentElement: prevElement,
+      renderedChildren: prevRenderedChildren,
+    } = this;
     // update current level node
     updateDomProperties(this.node, prevElement.props, nextProps);
 
@@ -70,7 +73,8 @@ class DOMComponent {
         continue;
       }
 
-      let canUpdate = prevRenderedChildren[i].currentElement.type == nextChildren[i].type;
+      let canUpdate =
+        prevRenderedChildren[i].currentElement.type == nextChildren[i].type;
       if (!canUpdate) {
         // mount a new node by replace
         // let prevNode = this.node;
@@ -101,9 +105,9 @@ class DOMComponent {
 class CompositeComponent {
   /**
    *
-   *  @param {object} element: {type, props}  
+   *  @param {object} element: {type, props}
    *  @param {?array-like} args: children of current element
-   **/  
+   **/
   constructor(element) {
     this.currentElement = element;
     // reference to another CompositeComponent instance or DOMComponent instance
@@ -152,7 +156,11 @@ class CompositeComponent {
 
   receive(nextElement) {
     let { type, props: nextProps } = nextElement;
-    let { currentElement, publicInstance, renderedComponent: prevRenderedComponent } = this;
+    let {
+      currentElement,
+      publicInstance,
+      renderedComponent: prevRenderedComponent,
+    } = this;
 
     let prevRenderedEl = prevRenderedComponent.currentElement,
       nextRenderedElement;

@@ -39,20 +39,30 @@ const stories = [
     likes: randomLikes(),
   },
 ];
-const StoryLike = ({story, onToggle}) => {
+class StoryLike extends Component {
+  render() {
+    const { story, onToggle } = this.props;
     return (
-        <li>
-          <button style={styles.button} onClick={e => onToggle()}>
-            {story.likes} ❤️
-          </button>
-          <a href={story.url}>{story.name}</a>
-        </li>
-    ); 
+      <li id="story-item">
+        <button
+          id="story-like-btn"
+          style={styles.button}
+          onClick={(e) => onToggle()}
+        >
+          {story.likes} ❤️
+        </button>
+        <a id="story-link" href={story.url}>
+          {story.name}
+        </a>
+      </li>
+    );
+  }
 }
 
 class StoryList extends Component {
   constructor(props) {
     super(props);
+    this.state = { stories: stories.slice(0, 1) };
     this.state = { stories };
   }
 
@@ -63,11 +73,14 @@ class StoryList extends Component {
   }
 
   handleLike(i) {
-      const stories = this.state.stories;
-    //   const updatedStory = this.state.stories[i];
-      const updatedStory =  {...stories[i], likes: stories[i].likes + 1}
-      const nextStories = [...stories.slice(0, i), updatedStory, ...stories.slice(i)];
-      this.setState({stories: nextStories});
+    const stories = this.state.stories;
+    const updatedStory = { ...stories[i], likes: stories[i].likes + 1 };
+    const nextStories = [
+      ...stories.slice(0, i),
+      updatedStory,
+      ...stories.slice(i + 1),
+    ];
+    this.setState({ stories: nextStories });
   }
 
   render() {
@@ -75,22 +88,24 @@ class StoryList extends Component {
       <div id="list">
         <ul style={styles.ul}>
           {this.state.stories.map((s, i) => {
-            return <StoryLike story={s}  onToggle={() => this.handleLike(i)} />;
+            return <StoryLike story={s} onToggle={() => this.handleLike(i)} />;
           })}
         </ul>
-        <button onClick={e => this.handleAdd()}>Add</button>
+        <button onClick={(e) => this.handleAdd()}>Add</button>
       </div>
     );
   }
 }
 
-const App = (props) => {
+class App extends Component {
+  render() {
     return (
-      <div>
-        <h1>{props.title}</h1>
+      <div id="app-wrapper">
+        <h1 id="app-title">{this.props.title}</h1>
         <StoryList />
       </div>
-    )
+    );
+  }
 }
 
 export default App;

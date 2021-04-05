@@ -1,7 +1,7 @@
 import instantiateComponent from './instantiate';
 
 // simulate ReactDOM.render
-export default function render(element, container) {
+export default function stackRender(element, container) {
   if (container.children.length > 1) {
     const prevRootNode = container.children[1];
     const prevRootComp = prevRootNode._internalInstance;
