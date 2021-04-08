@@ -39,18 +39,18 @@ const UPDATE = 3;
  *    tag: 'root' | 'host' | 'class'
  *    type: string (h1, ul) | function (App, StoryList), same as element.type
  *    props: Object {...others, children: []}, same as element.props
+ *    stateNode: DOM node | instance of component
  *
  *    // the linkage that allows the reconciliation to be paused and restarted
  *    // for next loop when browser main thread is idle
  *    child: the first child Fiber | null
  *    sibling: its sibling fiber | null
- *    parent: its parent fiber | null
+ *    parent: its parent fiber | null, called return in React
  *    // for commit phase
  *    effectTag: 1(Placement) | 2(Deletion) | 3(Update)
  *    effects: Array, flattened list of fibers to be rendered to DOM
- *    stateNode: DOM node | instance of component
  *
- *    alternate: corresponding fiber which has been committed last time
+ *    alternate: corresponding fiber which has been committed to DOM last time
  * }
  */
 export default class Scheduler {
@@ -78,7 +78,6 @@ export default class Scheduler {
       return null;
     }
 
-    // Copy the setState parameter from the update payload to the corresponding fiber
     // if (update.partialState) {
     //   update.instance.__fiber.partialState = update.partialState;
     // }
@@ -94,21 +93,21 @@ export default class Scheduler {
     //   // previous tree as alternate
     //   alternate: root,
     // };
-    let root, fiberTag;
+    let startFiber, fiberTag;
     if (update.from === 'root') {
-      root = update.domContainer._rootContainerFiber;
+      startFiber = update.domContainer._rootContainerFiber;
       fiberTag = HOST_ROOT;
     } else {
       // start from fiber where setState is triggered
-      root = update.instance.__fiber;
+      startFiber = update.instance.__fiber;
       fiberTag = CLASS_COMPONENT;
     }
     return {
       tag: fiberTag,
-      stateNode: update.domContainer || root.stateNode,
-      props: update.initialProps || root.props,
+      stateNode: update.domContainer || startFiber.stateNode,
+      props: update.initialProps || startFiber.props,
       partialState: update.partialState,
-      alternate: root,
+      alternate: startFiber,
     };
   }
 

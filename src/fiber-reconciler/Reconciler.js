@@ -7,28 +7,13 @@ const PLACEMENT = 1;
 const DELETION = 2;
 const UPDATE = 3;
 
-/**
-let fiber = {
-  tag: HOST_COMPONENT,
-  type: 'div' | class | function,
-  parent: 'parentFiber', 
-  child: 'childFiber',
-  sibling: 'siblingFiber',
-  alternate: 'currentFiber', // from prev fiber reconciled
-  stateNode: dom | component instance,
-  props: { children: [], className: 'foo', .. },
-  partialState: null,
-  effectTag: PLACEMENT,
-  effects: [],
-}
-*/
-
 export default class Reconciler {
   /**
    *
-   * @param {Object} wipFiber
-   *  this is actually nextUnitOfWork from Scheduler workloop when browser main thread idle
-   *  continue reconciling the tree
+   * @param {Object} wipFiber: 
+   *  this is actually nextUnitOfWork from Scheduler workloop 
+   *  when browser main thread becomes idle, Reconciler can resume executing, 
+   *  continue walking the element object tree down under
    */
   receive(wipFiber) {
     if (wipFiber.tag === CLASS_COMPONENT) {

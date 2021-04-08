@@ -8,9 +8,15 @@ export default class Component {
 
   setState(partialState) {
     this.state = Object.assign({}, this.state, partialState);
-    // this._internalInstance.receive(this._internalInstance.currentElement);
+    // Naive and dirty way 
+    if (this._internalInstance) {
+      // state update for stack reconciler 
+      this._internalInstance.receive(this._internalInstance.currentElement);
+    }  else {
+      // for fiber 
+      scheduleUpdate(this, partialState);
+    }
 
-    scheduleUpdate(this, partialState);
   }
 
   setInternalInstance(internal) {
